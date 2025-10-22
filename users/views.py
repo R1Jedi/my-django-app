@@ -1,7 +1,11 @@
+import uuid
+from datetime import timedelta
+
 from django.contrib.auth.views import LoginView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
+from django.utils.timezone import now
 from django.views.generic import CreateView, TemplateView, UpdateView
 
 from common.views import TitleMixin
@@ -22,6 +26,20 @@ class UserRegistrationView(TitleMixin, SuccessMessageMixin, CreateView):
     success_url = reverse_lazy('users:login')
     success_message = "Вы успешно зарегестрировались!"
     title = "Store - Регистрация"
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+
+        expiration = now() + timedelta(hours=48)
+        email_verification = EmailVerification.objects.create(
+            user=self.object,
+            code=uuid.uuid4(),
+            expiration=expiration
+        )
+
+        email_verification.send_verification_email_async()
+
+        return response
 
 
 class UserProfileView(TitleMixin, UpdateView):
