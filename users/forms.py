@@ -38,13 +38,6 @@ class UserRegistrationForm(UserCreationForm):
         model = User
         fields = ('first_name', 'last_name', 'username', 'email', 'password1', 'password2')
 
-    def save(self, commit=True):
-        user = super(UserRegistrationForm, self).save(commit=True)
-        expiration = now() + timedelta(hours=48)
-        record = EmailVerification.objects.create(code=uuid.uuid4(), user=user, expiration=expiration)
-        record.send_verification_email_async()
-        return user
-
 
 class UserProfileForm(UserChangeForm):
     first_name = forms.CharField(widget=forms.TextInput(attrs={'class': "form-control py-4"}))
