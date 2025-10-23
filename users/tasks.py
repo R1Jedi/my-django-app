@@ -1,0 +1,38 @@
+from celery import shared_task
+from django.core.mail import send_mail, get_connection
+from django.urls import reverse
+from django.conf import settings
+
+
+@shared_task
+def send_verification_email_async(user_id, code, user_email, username):
+    try:
+        link = reverse('users:email_verification', kwargs={
+            'email': user_email,
+            'code': code
+        })
+        verification_link = f'{settings.DOMAIN_NAME}{link}'
+
+        subject = f'Подтверждение учетной записи для {username}'
+        message = f'''
+        Здравствуйте, {username}!
+
+        Для подтверждения вашей учетной записи перейдите по ссылке:
+        {verification_link}
+
+        Ссылка действительна в течение 48 часов.
+        '''
+        conn = get_connection(backend='django.core.mail.backends.smtp.EmailBackend')
+        send_mail(
+            subject=subject,
+            message=message,
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[user_email],
+            fail_silently=False,
+            connection=conn
+        )
+
+        return f'Email верификации отправлен на {user_email}'
+
+    except Exception as e:
+        return f'Ошибка отправки email: {str(e)}'
