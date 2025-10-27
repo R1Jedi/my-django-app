@@ -22,14 +22,12 @@ def send_verification_email_async(user_id, code, user_email, username):
 
         Ссылка действительна в течение 48 часов.
         '''
-        conn = get_connection(backend='django.core.mail.backends.smtp.EmailBackend')
         send_mail(
             subject=subject,
             message=message,
             from_email=settings.EMAIL_HOST_USER,
             recipient_list=[user_email],
             fail_silently=False,
-            connection=conn
         )
 
         return f'Email верификации отправлен на {user_email}'
