@@ -70,15 +70,15 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'django_extensions',
 
+    'products',
+    'orders',
+    'users',
+
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.github',
     'debug_toolbar',
-
-    'products',
-    'orders',
-    'users',
 ]
 
 MIDDLEWARE = [
@@ -220,6 +220,8 @@ else:
     EMAIL_USE_SSL = env('EMAIL_USE_SSL')
 
 # OAuth
+SOCIALACCOUNT_LOGIN_ON_GET = True
+
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
