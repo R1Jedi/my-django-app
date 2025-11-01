@@ -78,6 +78,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.github',
+    'allauth.socialaccount.providers.yandex',
     'debug_toolbar',
 ]
 
@@ -220,6 +221,7 @@ else:
     EMAIL_USE_SSL = env('EMAIL_USE_SSL')
 
 # OAuth
+SOCIALACCOUNT_AUTO_SIGNUP = True
 SOCIALACCOUNT_LOGIN_ON_GET = True
 
 AUTHENTICATION_BACKENDS = [
@@ -228,15 +230,6 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 SITE_ID = 1
-
-SOCIALACCOUNT_PROVIDERS = {
-    'github': {
-        'SCOPE': [
-            'user',
-        ],
-    }
-}
-
 
 # Stripe
 STRIPE_PUBLIC_KEY = env('STRIPE_PUBLIC_KEY')
