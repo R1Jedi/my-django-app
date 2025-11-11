@@ -1,7 +1,7 @@
 import uuid
 from datetime import timedelta
 
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
@@ -66,3 +66,28 @@ class EmailVerificationView(TitleMixin, TemplateView):
             return super(EmailVerificationView, self).get(request, *args, **kwargs)
         else:
             return HttpResponseRedirect(reverse('users:index'))
+
+
+class UserPasswordResetView(TitleMixin, SuccessMessageMixin, PasswordResetView):
+    template_name = 'users/password_reset.html'
+    email_template_name = 'users/password_reset_email.html'
+    success_url = reverse_lazy('users:password_reset_done')
+    success_message = "Письмо с инструкциями по восстановлению пароля отправлено на ваш email"
+    title = "Store - Восстановление пароля"
+
+
+class UserPasswordResetDoneView(TitleMixin, PasswordResetDoneView):
+    template_name = 'users/password_reset_done.html'
+    title = 'Store - Письмо отправлено'
+
+
+class UserPasswordResetConfirmView(TitleMixin, PasswordResetConfirmView):
+    template_name = 'users/password_reset_confirm.html'
+    success_url = reverse_lazy('users:password_reset_complete')
+    title = "Store - Ввод нового пароля"
+
+
+class UserPasswordResetCompleteView(TitleMixin, PasswordResetCompleteView):
+    template_name = 'users/password_reset_complete.html'
+    title = "Store - Пароль изменен"
+
