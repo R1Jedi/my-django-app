@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
+import sys
 from pathlib import Path
 
 import environ
@@ -239,3 +240,9 @@ SITE_ID = 1
 STRIPE_PUBLIC_KEY = env('STRIPE_PUBLIC_KEY')
 STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')
 STRIPE_WEBHOOK_SECRET = env('STRIPE_WEBHOOK_SECRET')
+
+
+if 'test' in sys.argv:
+    DEBUG_TOOLBAR_CONFIG = {
+        'IS_RUNNING_TESTS': False,
+    }
