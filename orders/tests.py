@@ -306,7 +306,7 @@ class StripeWebhookTestCase(TestCase):
             HTTP_STRIPE_SIGNATURE='invalid_signature'
         )
 
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
 
     def test_stripe_webhook_invalid_payload(self):
         """Тест webhook с невалидными данными"""
@@ -317,7 +317,7 @@ class StripeWebhookTestCase(TestCase):
             HTTP_STRIPE_SIGNATURE='test_signature'
         )
 
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
 
 
 class FulfillOrderTestCase(TestCase):
