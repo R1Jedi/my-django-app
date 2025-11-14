@@ -7,6 +7,9 @@ from django.urls import reverse, reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import CreateView, DetailView, ListView, TemplateView
 
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
+
 from common.views import TitleMixin
 from orders.forms import OrderForm
 from orders.models import Order
@@ -33,6 +36,9 @@ class OrderCreateView(TitleMixin, CreateView):
     def post(self, request, *args, **kwargs):
         super(OrderCreateView, self).post(request, *args, **kwargs)
         baskets = Basket.objects.filter(user=self.request.user)
+        if not baskets.exists():
+            return HttpResponseRedirect(reverse('orders:order_success'))
+
         checkout_session = stripe.checkout.Session.create(
             line_items=baskets.stripe_products(),
             metadata={'order_id': self.object.id},
@@ -50,7 +56,7 @@ class OrderCreateView(TitleMixin, CreateView):
 @csrf_exempt
 def stripe_webhook_view(request):
     payload = request.body
-    sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+    sig_header = request.META.get('HTTP_STRIPE_SIGNATURE', '')
     event = None
 
     try:
@@ -67,23 +73,20 @@ def stripe_webhook_view(request):
     # Handle the checkout.session.completed event
     if event['type'] == 'checkout.session.completed':
         # Retrieve the session. If you require line items in the response, you may include them by expanding line_items.
-        session = stripe.checkout.Session.retrieve(
-            event['data']['object']['id'],
-            expand=['line_items'],
-        )
-        fulfill_order(session)
+        session_data = event['data']['object']
+        fulfill_order(session_data)
 
     # Passed signature verification
     return HttpResponse(status=HTTPStatus.OK)
 
 
 def fulfill_order(session):
-    order_id = int(session.metadata.order_id)
+    order_id = int(session['metadata']['order_id'])
     order = Order.objects.get(id=order_id)
     order.update_after_payment()
 
 
-class OrderListView(TitleMixin, ListView):
+class OrderListView(TitleMixin, LoginRequiredMixin, ListView):
     template_name = 'orders/orders.html'
     title = "Store - Заказы"
     queryset = Order.objects.all()
@@ -94,9 +97,15 @@ class OrderListView(TitleMixin, ListView):
         return queryset.filter(initiator=self.request.user)
 
 
-class OrderDetailView(DetailView):
+class OrderDetailView(LoginRequiredMixin, DetailView):
     template_name = 'orders/order.html'
     model = Order
+
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset)
+        if obj.initiator != self.request.user:
+            raise PermissionDenied("У вас нет доступа к этому заказу")
+        return obj
 
     def get_context_data(self, **kwargs):
         context = super(DetailView, self).get_context_data(**kwargs)
