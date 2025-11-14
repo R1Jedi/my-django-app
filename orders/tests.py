@@ -1,14 +1,13 @@
 from http import HTTPStatus
-from unittest.mock import patch, MagicMock
-import stripe
+from unittest.mock import MagicMock, patch
 
+import stripe
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
-from django.conf import settings
 
 from orders.models import Order
-from products.models import Product, ProductCategory, Basket
+from products.models import Basket, Product, ProductCategory
 
 User = get_user_model()
 
