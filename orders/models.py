@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.core.mail import send_mail
 from django.db import models
 
 from products.models import Basket
@@ -37,3 +39,46 @@ class Order(models.Model):
         }
         baskets.delete()
         self.save()
+
+        self.send_order_email()
+
+    def send_order_email(self):
+        """Отправляет email о заказе"""
+        subject = f'Заказ #{self.id} успешно оплачен'
+        message = f"""
+            Уважаемый(ая) {self.first_name} {self.last_name}!
+
+            Ваш заказ #{self.id} успешно оплачен.
+            Статус: {self.get_status_display()}
+            Адрес доставки: {self.address}
+            Сумма заказа: {self.basket_history.get('total_sum', 0)} руб.
+
+            Спасибо за покупку!
+            """
+
+        send_mail(
+            subject=subject,
+            message=message,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[self.email]
+        )
+
+    def send_status_update_email(self):
+        """Отправляет email при изменении статуса"""
+        if self.status == self.DELIVERED:
+            subject = f'Ваш заказ #{self.id} доставлен'
+            message = f"""
+                Уважаемый(ая) {self.first_name} {self.last_name}!
+
+                Ваш заказ #{self.id} был успешно доставлен по адресу: {self.address}
+
+                Спасибо, что выбрали нас!
+                """
+
+            send_mail(
+                subject=subject,
+                message=message,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[self.email],
+                fail_silently=False,
+            )
