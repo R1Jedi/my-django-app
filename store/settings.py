@@ -69,6 +69,11 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.humanize',
     'django_extensions',
+    'rest_framework',
+
+    'products',
+    'orders',
+    'users',
 
     'allauth',
     'allauth.account',

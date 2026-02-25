@@ -1,6 +1,13 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 
 from . import views
+from .viewsets import ProductCategoryViewSet, ProductViewSet, BasketViewSet
+
+router = DefaultRouter()
+router.register(r'categories', ProductCategoryViewSet)
+router.register(r'products', ProductViewSet)
+router.register(r'basket', BasketViewSet, basename='basket')
 
 app_name = 'products'
 urlpatterns = [
@@ -11,4 +18,6 @@ urlpatterns = [
 
     path('baskets/add/<int:product_id>', views.basket_add, name='basket_add'),
     path('baskets/remove/<int:basket_id>', views.basket_remove, name='basket_remove'),
+
+    path('api/', include(router.urls)),
 ]
