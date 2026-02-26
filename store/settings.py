@@ -33,10 +33,6 @@ env = environ.Env(
     EMAIL_HOST_USER=(str),
     EMAIL_HOST_PASSWORD=(str),
     EMAIL_USE_SSL=(bool),
-
-    STRIPE_PUBLIC_KEY=(str),
-    STRIPE_SECRET_KEY=(str),
-    STRIPE_WEBHOOK_SECRET=(str),
 )
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -233,11 +229,6 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 SITE_ID = 1
-
-# Stripe
-STRIPE_PUBLIC_KEY = env('STRIPE_PUBLIC_KEY')
-STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')
-STRIPE_WEBHOOK_SECRET = env('STRIPE_WEBHOOK_SECRET')
 
 
 if 'test' in sys.argv:
