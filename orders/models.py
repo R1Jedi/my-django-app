@@ -39,20 +39,20 @@ class Order(models.Model):
         }
         baskets.delete()
         self.save()
-
         self.send_order_email()
 
     def send_order_email(self):
         """Отправляет email о заказе"""
-        subject = f'Заказ #{self.id} успешно оплачен'
+        subject = f'Заказ #{self.id} успешно создан'
         message = f"""
             Уважаемый(ая) {self.first_name} {self.last_name}!
 
-            Ваш заказ #{self.id} успешно оплачен.
+            Ваш заказ #{self.id} успешно создан.
             Статус: {self.get_status_display()}
             Адрес доставки: {self.address}
             Сумма заказа: {self.basket_history.get('total_sum', 0)} руб.
 
+            Наш менеджер свяжется с вами для подтверждения заказа.
             Спасибо за покупку!
             """
 
