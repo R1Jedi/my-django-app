@@ -58,7 +58,6 @@ ALLOWED_HOSTS = ['*']
 DOMAIN_NAME = env('DOMAIN_NAME')
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -70,10 +69,6 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'django_extensions',
     'rest_framework',
-
-    'products',
-    'orders',
-    'users',
 
     'allauth',
     'allauth.account',
@@ -125,12 +120,10 @@ INTERNAL_IPS = [
 ]
 
 # Redis
-
 REDIS_HOST = env('REDIS_HOST')
 REDIS_PORT = env('REDIS_PORT')
 
 # Cashes
-
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
@@ -200,7 +193,6 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Users
-
 AUTH_USER_MODEL = 'users.User'
 LOGIN_URL = '/users/login/'
 LOGIN_REDIRECT_URL = '/'
@@ -217,7 +209,6 @@ else:
     EMAIL_USE_SSL = env('EMAIL_USE_SSL')
 
 # OAuth
-
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
@@ -235,7 +226,6 @@ SOCIALACCOUNT_PROVIDERS = {
 
 
 # Stripe
-
 STRIPE_PUBLIC_KEY = env('STRIPE_PUBLIC_KEY')
 STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')
 STRIPE_WEBHOOK_SECRET = env('STRIPE_WEBHOOK_SECRET')
